@@ -7,16 +7,17 @@
 
 int main()
 {
-    ScvImage *Image = (ScvImage *)malloc(sizeof(ScvImage));
+    ScvImage *Image;
     char strFilePath[50] = {0}; //文件地址
 
     printf("Please input the path of .bmp file.\n");
     scanf("%s", strFilePath);
-    LoadFile(strFilePath,Image);
-    printf("%d",*(Image->data));
+    Image = LoadFile(strFilePath);
+    if (Image->biBitCount == 24)
+        Image = GrayscaleProc(Image);
     return 0;
 }
-void LoadFile(char *fileName,ScvImage* Image)
+ScvImage *LoadFile(char *fileName) //出错返回NULL
 {
     BITMAPFILEHEADER bitHead;
     BITMAPINFOHEADER bitinfoHead;
@@ -25,8 +26,7 @@ void LoadFile(char *fileName,ScvImage* Image)
     int biBitCount, i;
     long PlanNum;
     int width, height, lineByte;
-
-    
+    ScvImage *Image = (ScvImage *)malloc(sizeof(ScvImage));
 
     pfile = fopen(fileName, "r+");
     if (pfile != NULL)
@@ -39,6 +39,7 @@ void LoadFile(char *fileName,ScvImage* Image)
         {
             printf("Read Type of file failed.\n");
             fclose(pfile);
+            return NULL;
         }
         //使指针重新指向文件起始位置
         rewind(pfile);
@@ -47,6 +48,7 @@ void LoadFile(char *fileName,ScvImage* Image)
         if (fileType != 0x4d42)
         {
             printf("Not the .bmp file");
+            return NULL;
         }
         fread(&bitHead, 1, sizeof(BITMAPFILEHEADER), pfile); //读取头文件
         // printBmpHead(&bitHead);
@@ -58,6 +60,7 @@ void LoadFile(char *fileName,ScvImage* Image)
     else
     {
         printf("File open fail.\n");
+        return NULL;
     }
 
     biBitCount = bitinfoHead.biBitCount;
@@ -89,12 +92,38 @@ void LoadFile(char *fileName,ScvImage* Image)
     fread(fColorData, lineByte * height, 1, pfile);
     fclose(pfile);
 
-    Image->width = width;
-    Image->height = height;
-    Image->widthBytes = lineByte;
+    Image->bmpfHeader = &bitHead;
+    Image->bmpiHeader = &bitinfoHead;
+    Image->bmpRgb = Rgb;
     Image->data = fColorData;
+    Image->biBitCount = biBitCount;
+    Image->widthByte = lineByte;
+    return Image;
+}
+
+ScvImage *GrayscaleProc(ScvImage *Image1)
+{
+    RGBQUAD *pColorTable;
+    int linewidth = Image1->widthByte, height = Image1->bmpiHeader->biHeight;
+    int i;
+    //修改文件头,其中有两项需要修改，分别为bfSize和bfOffBits
+    Image1->bmpfHeader->bfSize = 14 + 40 + 256 * sizeof(RGBQUAD) + linewidth * height;
+    Image1->bmpfHeader->bfOffBits = 14 + 40 + 256 * sizeof(RGBQUAD);
+    //修改信息头，其中有两项需要修改，1个位biBitCount:真彩图为24 ，应改成8；另一个是biSizeImage:由于每像素所占位数的变化，所以位图数据的大小发生变化
+    Image1->bmpiHeader->biBitCount = 8;
+    Image1->bmpiHeader->biSizeImage = linewidth * height;
+
+    pColorTable = new RGBQUAD[256];
+    for (i = 0; i < 256; i++)
+    {
+        pColorTable[i].rgbRed = i;
+        pColorTable[i].rgbGreen = i;
+        pColorTable[i].rgbBlue = i;
+    }
+    Image1->bmpRgb = pColorTable;
     
 }
+
 void printBmpHead(BITMAPFILEHEADER *BFileHead)
 {
     printf("\t位图文件头\n");

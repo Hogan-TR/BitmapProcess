@@ -53,20 +53,13 @@ typedef struct tagIMAGEDATA //ÏñËØÐÅÏ¢
 } IMAGEDATA;
 #pragma pack()
 
-// typedef struct tagFILE
-// {
-//     BITMAPFILEHEADER *bmpfHeader;
-//     BITMAPINFOHEADER *bmpiHeader;
-//     RGBQUAD *bmpRgb;
-//     IMAGEDATA *bmpImagedata;
-// } FILEDATA;
-
 typedef struct ScvImage {
-    int width;
-    int height;
-    int widthBytes;
-    // int origin;
+    BITMAPFILEHEADER *bmpfHeader;
+    BITMAPINFOHEADER *bmpiHeader;
+    RGBQUAD *bmpRgb;
     BYTE *data;
+    int biBitCount;
+    int widthByte;
 } ScvImage;
 
 #endif
