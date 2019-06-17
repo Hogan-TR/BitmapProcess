@@ -1,0 +1,9 @@
+{
+    "C_Cpp.errorSquiggles": "Disabled",
+    "files.associations": {
+        "wingdi.h": "c",
+        "header.h": "c",
+        "windows.h": "c",
+        "readBITMAP.C": "cpp"
+    }
+}
