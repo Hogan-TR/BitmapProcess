@@ -1,9 +1,12 @@
-#pragma pack(1)
+#ifndef __MYFILE_H__
+#define __MYFILE_H__
+
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
 typedef unsigned long DWORD;
 typedef long LONG;
 
+#pragma pack(1)
 typedef struct tagBITMAPFILEHEADER //位图头文件定义
 {
     WORD bfType;      //位图类别，'BM', 2
@@ -12,7 +15,9 @@ typedef struct tagBITMAPFILEHEADER //位图头文件定义
     WORD bfReserved2; //保留字, 2
     DWORD bfOffBits;  //从文件头到实际位图数据的偏移字节数, 4
 } BITMAPFILEHEADER;
+#pragma pack()
 
+#pragma pack(1)
 typedef struct tagBITMAPINFOHEADER //位图信息头定义
 {
     DWORD biSize;         //信息头大小, 4
@@ -27,7 +32,9 @@ typedef struct tagBITMAPINFOHEADER //位图信息头定义
     DWORD biClrUsed;      //位图实际用到的色彩数, 4
     DWORD biClrImportant; //位图中重要的色彩数, 4
 } BITMAPINFOHEADER;
+#pragma pack()
 
+#pragma pack(1)
 typedef struct tagRGBQUAD //调色板定义
 {
     BYTE rgbBlue;     //蓝色值
@@ -35,13 +42,31 @@ typedef struct tagRGBQUAD //调色板定义
     BYTE rgbRed;      //红色值
     BYTE rgbReserved; //保留值
 } RGBQUAD;
+#pragma pack()
 
+#pragma pack(1)
 typedef struct tagIMAGEDATA //像素信息
 {
     BYTE red;
     BYTE green;
     BYTE blue;
 } IMAGEDATA;
+#pragma pack()
 
-void printBmpHead(BITMAPFILEHEADER *);
-void printBmpInfoHead(BITMAPINFOHEADER *);
+// typedef struct tagFILE
+// {
+//     BITMAPFILEHEADER *bmpfHeader;
+//     BITMAPINFOHEADER *bmpiHeader;
+//     RGBQUAD *bmpRgb;
+//     IMAGEDATA *bmpImagedata;
+// } FILEDATA;
+
+typedef struct ScvImage {
+    int width;
+    int height;
+    int widthBytes;
+    // int origin;
+    BYTE *data;
+} ScvImage;
+
+#endif

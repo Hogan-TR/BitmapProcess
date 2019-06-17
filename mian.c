@@ -1,61 +1,99 @@
 #include <stdio.h>
-#include <math.h>
 #include <stdlib.h>
+#include <math.h>   //pow
+#include <string.h> //memset
 #include "myfile.h"
+#include "io.h"
 
 int main()
 {
-    BITMAPFILEHEADER bitHead;
-    BITMAPINFOHEADER bitinfoHead;
-    FILE *pfile;
+    ScvImage *Image = (ScvImage *)malloc(sizeof(ScvImage));
+    char strFilePath[50] = {0}; //文件地址
 
-    unsigned int Counti;
-    int biBitCount;
-    RGBQUAD *Rgb;
-
-    char strFilePath[50]; //文件地址
     printf("Please input the path of .bmp file.\n");
     scanf("%s", strFilePath);
+    LoadFile(strFilePath,Image);
+    printf("%d",*(Image->data));
+    return 0;
+}
+void LoadFile(char *fileName,ScvImage* Image)
+{
+    BITMAPFILEHEADER bitHead;
+    BITMAPINFOHEADER bitinfoHead;
+    RGBQUAD *Rgb;
+    FILE *pfile;
+    int biBitCount, i;
+    long PlanNum;
+    int width, height, lineByte;
 
-    pfile = fopen(strFilePath, "r+");
+    
 
+    pfile = fopen(fileName, "r+");
     if (pfile != NULL)
     {
-        printf("Successfully open.\n");
+        printf("Successfully open the file.\n");
         WORD fileType;
 
+        //初步判断是否能读取
         if (fread(&fileType, 1, sizeof(WORD), pfile) <= 0)
         {
-            printf("Read BMP failed.\n");
+            printf("Read Type of file failed.\n");
             fclose(pfile);
-            return 0;
         }
+        //使指针重新指向文件起始位置
+        rewind(pfile);
 
-        rewind(pfile); //使指针重新指向文件起始位置
-
-        if (fileType != 0x4d42) //判断是否位.bmp文件
+        //判断是否位.bmp文件
+        if (fileType != 0x4d42)
         {
             printf("Not the .bmp file");
-            return 0;
         }
         fread(&bitHead, 1, sizeof(BITMAPFILEHEADER), pfile); //读取头文件
-        printBmpHead(&bitHead);
-        printf("\n");
+        // printBmpHead(&bitHead);
+        // printf("\n");
         fread(&bitinfoHead, 1, sizeof(BITMAPINFOHEADER), pfile); //读取信息头
-        printBmpInfoHead(&bitinfoHead);
-        printf("\n");
-        biBitCount = bitinfoHead.biBitCount;
-        if (biBitCount < 24)
-        {
-            Rgb = (RGBQUAD *)malloc((int)pow(2, biBitCount) * sizeof(RGBQUAD));
-            fread(Rgb, 4, (int)pow(2, biBitCount), pfile);
-        }
+        // printBmpInfoHead(&bitinfoHead);
+        // printf("\n");
     }
     else
     {
         printf("File open fail.\n");
-        return 0;
     }
+
+    biBitCount = bitinfoHead.biBitCount;
+    if (biBitCount < 24) //有调色板，读入
+    {
+        PlanNum = (long)pow(2, biBitCount);
+        Rgb = (RGBQUAD *)malloc(PlanNum * sizeof(RGBQUAD));
+        memset(Rgb, 0, PlanNum * sizeof(RGBQUAD));
+        fread(Rgb, 4, (int)pow(2, biBitCount), pfile);
+
+        printf("Color Plate Number: %d\n", PlanNum);
+        printf("\t调色板信息\n");
+        for (i = 0; i < PlanNum; i++)
+        {
+            if (i % 5 == 0)
+                printf("\n");
+            printRgbQuan(&Rgb[i]);
+        }
+    }
+
+    //向内存中存储像素信息
+    width = bitinfoHead.biWidth;
+    height = bitinfoHead.biHeight;
+    //位图每行字节数必须是4的整数倍
+    //或者：(width*biBitCount+31)/32*4
+    lineByte = (width * biBitCount / 8 + 3) / 4 * 4;
+    BYTE *fColorData = (BYTE *)malloc(lineByte * height);
+    //位图数据读入数组
+    fread(fColorData, lineByte * height, 1, pfile);
+    fclose(pfile);
+
+    Image->width = width;
+    Image->height = height;
+    Image->widthBytes = lineByte;
+    Image->data = fColorData;
+    
 }
 void printBmpHead(BITMAPFILEHEADER *BFileHead)
 {
@@ -80,4 +118,8 @@ void printBmpInfoHead(BITMAPINFOHEADER *BInfoHead)
     printf("Y方向分辨率: %d\n", BInfoHead->biYPelsPerMeter);
     printf("使用的颜色数: %d\n", BInfoHead->biClrUsed);
     printf("重要颜色数: %d\n", BInfoHead->biClrImportant);
+}
+void printRgbQuan(RGBQUAD *fRGB)
+{
+    printf("(%-3d,%-3d,%-3d)", fRGB->rgbRed, fRGB->rgbGreen, fRGB->rgbBlue);
 }

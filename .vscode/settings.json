@@ -5,6 +5,8 @@
         "header.h": "c",
         "windows.h": "c",
         "readBITMAP.C": "cpp",
-        "winapifamily.h": "c"
+        "winapifamily.h": "c",
+        "math.h": "c",
+        "io.h": "c"
     }
 }
