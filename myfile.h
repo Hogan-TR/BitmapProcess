@@ -1,43 +1,47 @@
+#pragma pack(1)
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
 typedef unsigned long DWORD;
 typedef long LONG;
 
-typedef struct tagBITMAPFILEHEADER //ä½å›¾å¤´æ–‡ä»¶å®šä¹‰
+typedef struct tagBITMAPFILEHEADER //Î»Í¼Í·ÎÄ¼ş¶¨Òå
 {
-    WORD bfType;      //ä½å›¾ç±»åˆ«ï¼Œ'BM', 2
-    DWORD bfSize;     //æ–‡ä»¶å¤§å°, 4
-    WORD bfReserved1; //ä¿ç•™å­—, 2
-    WORD bfReserved2; //ä¿ç•™å­—, 2
-    DWORD bfOffBits;  //ä»æ–‡ä»¶å¤´åˆ°å®é™…ä½å›¾æ•°æ®çš„åç§»å­—èŠ‚æ•°, 4
+    WORD bfType;      //Î»Í¼Àà±ğ£¬'BM', 2
+    DWORD bfSize;     //ÎÄ¼ş´óĞ¡, 4
+    WORD bfReserved1; //±£Áô×Ö, 2
+    WORD bfReserved2; //±£Áô×Ö, 2
+    DWORD bfOffBits;  //´ÓÎÄ¼şÍ·µ½Êµ¼ÊÎ»Í¼Êı¾İµÄÆ«ÒÆ×Ö½ÚÊı, 4
 } BITMAPFILEHEADER;
 
-typedef struct tagBITMAPINFOHEADER //ä½å›¾ä¿¡æ¯å¤´å®šä¹‰
+typedef struct tagBITMAPINFOHEADER //Î»Í¼ĞÅÏ¢Í·¶¨Òå
 {
-    DWORD biSize;         //ä¿¡æ¯å¤´å¤§å°, 4
-    LONG biWidth;         //å›¾åƒå®½åº¦, 4
-    LONG biHeight;        //å›¾åƒé«˜åº¦, 4
-    WORD biPlanes;        //ç›®æ ‡è®¾å¤‡çš„çº§åˆ«ï¼Œå¿…é¡»æ˜¯1, 2
-    WORD biBitCount;      //æ¯åƒç´ ä½æ•°, 2
-    DWORD biCompression;  //å‹ç¼©ç±»å‹, 4
-    DWORD biSizeImage;    //å‹ç¼©å›¾åƒå¤§å°å­—èŠ‚æ•°, 4
-    LONG biXPelsPerMeter; //æ°´å¹³åˆ†è¾¨ç‡, 4
-    LONG biYPelsPerMeter; //å‚ç›´åˆ†è¾¨ç‡, 4
-    DWORD biClrUsed;      //ä½å›¾å®é™…ç”¨åˆ°çš„è‰²å½©æ•°, 4
-    DWORD biClrImportant; //ä½å›¾ä¸­é‡è¦çš„è‰²å½©æ•°, 4
+    DWORD biSize;         //ĞÅÏ¢Í·´óĞ¡, 4
+    LONG biWidth;         //Í¼Ïñ¿í¶È, 4
+    LONG biHeight;        //Í¼Ïñ¸ß¶È, 4
+    WORD biPlanes;        //Ä¿±êÉè±¸µÄ¼¶±ğ£¬±ØĞëÊÇ1, 2
+    WORD biBitCount;      //Ã¿ÏñËØÎ»Êı, 2
+    DWORD biCompression;  //Ñ¹ËõÀàĞÍ, 4
+    DWORD biSizeImage;    //Ñ¹ËõÍ¼Ïñ´óĞ¡×Ö½ÚÊı, 4
+    LONG biXPelsPerMeter; //Ë®Æ½·Ö±æÂÊ, 4
+    LONG biYPelsPerMeter; //´¹Ö±·Ö±æÂÊ, 4
+    DWORD biClrUsed;      //Î»Í¼Êµ¼ÊÓÃµ½µÄÉ«²ÊÊı, 4
+    DWORD biClrImportant; //Î»Í¼ÖĞÖØÒªµÄÉ«²ÊÊı, 4
 } BITMAPINFOHEADER;
 
-typedef struct tagRGBQUAD //è°ƒè‰²æ¿å®šä¹‰
+typedef struct tagRGBQUAD //µ÷É«°å¶¨Òå
 {
-    BYTE rgbBlue;     //è“è‰²å€¼
-    BYTE rgbGreen;    //ç»¿è‰²å€¼
-    BYTE rgbRed;      //çº¢è‰²å€¼
-    BYTE rgbReserved; //ä¿ç•™å€¼
+    BYTE rgbBlue;     //À¶É«Öµ
+    BYTE rgbGreen;    //ÂÌÉ«Öµ
+    BYTE rgbRed;      //ºìÉ«Öµ
+    BYTE rgbReserved; //±£ÁôÖµ
 } RGBQUAD;
 
-typedef struct tagIMAGEDATA //åƒç´ ä¿¡æ¯
+typedef struct tagIMAGEDATA //ÏñËØĞÅÏ¢
 {
     BYTE red;
     BYTE green;
     BYTE blue;
 } IMAGEDATA;
+
+void printBmpHead(BITMAPFILEHEADER *);
+void printBmpInfoHead(BITMAPINFOHEADER *);

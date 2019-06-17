@@ -4,6 +4,7 @@
         "wingdi.h": "c",
         "header.h": "c",
         "windows.h": "c",
-        "readBITMAP.C": "cpp"
+        "readBITMAP.C": "cpp",
+        "winapifamily.h": "c"
     }
 }
