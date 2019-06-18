@@ -7,7 +7,7 @@
 
 int main()
 {
-    ScvImage *Image;
+    ScvImage *Image ;
     char strFilePath[50] = {0}; //文件地址
     char strOutPath[50] = {0};  //储存地址
 
@@ -31,7 +31,8 @@ ScvImage *LoadFile(char *fileName) //出错返回NULL
     int biBitCount, i;
     long PlanNum;
     int width, height, lineByte;
-    ScvImage *Image = (ScvImage *)malloc(sizeof(ScvImage));
+    
+    ScvImage *ImageL=(ScvImage*)malloc(sizeof(ScvImage));
 
     pfile = fopen(fileName, "r+");
     if (pfile != NULL)
@@ -97,18 +98,22 @@ ScvImage *LoadFile(char *fileName) //出错返回NULL
     fread(fColorData, lineByte * height, 1, pfile);
     fclose(pfile);
 
-    Image->bmpfHeader = &bitHead;
-    Image->bmpiHeader = &bitinfoHead;
-    Image->bmpRgb = Rgb;
-    Image->data = fColorData;
-    Image->biBitCount = biBitCount;
-    Image->widthByte = lineByte;
-    return Image;
+    // ImageL.bmpfHeader = bitHead;
+    // ImageL.bmpiHeader = bitinfoHead;
+    // ImageL.bmpRgb = 
+    // ImageL.data = 
+    ImageL->bmpfHeader = &bitHead;
+    ImageL->bmpiHeader = &bitinfoHead;
+    ImageL->bmpRgb = Rgb;
+    ImageL->data = fColorData;
+    ImageL->biBitCount = biBitCount;
+    ImageL->widthByte = lineByte;
+    return ImageL;
 }
 
 void GrayscaleProc(ScvImage *Image1)
 {
-    RGBQUAD *pColorTable = (RGBQUAD *)malloc(256);
+    RGBQUAD *pColorTable = Image1->bmpRgb;
     int linewidth = Image1->widthByte;
     int height = Image1->bmpiHeader->biHeight;
     int i, j, y;
