@@ -9,12 +9,17 @@ int main()
 {
     ScvImage *Image;
     char strFilePath[50] = {0}; //文件地址
+    char strOutPath[50] = {0};  //储存地址
 
     printf("Please input the path of .bmp file.\n");
     scanf("%s", strFilePath);
+    printf("Please input the path of outFile.\n");
+    scanf("%s", strOutPath);
+
     Image = LoadFile(strFilePath);
     if (Image->biBitCount == 24)
-        Image = GrayscaleProc(Image);
+        GrayscaleProc(Image);
+    saveImageToBmp(Image, strOutPath);
     return 0;
 }
 ScvImage *LoadFile(char *fileName) //出错返回NULL
@@ -51,11 +56,11 @@ ScvImage *LoadFile(char *fileName) //出错返回NULL
             return NULL;
         }
         fread(&bitHead, 1, sizeof(BITMAPFILEHEADER), pfile); //读取头文件
-        // printBmpHead(&bitHead);
-        // printf("\n");
+        printBmpHead(&bitHead);
+        printf("\n");
         fread(&bitinfoHead, 1, sizeof(BITMAPINFOHEADER), pfile); //读取信息头
-        // printBmpInfoHead(&bitinfoHead);
-        // printf("\n");
+        printBmpInfoHead(&bitinfoHead);
+        printf("\n");
     }
     else
     {
@@ -101,11 +106,15 @@ ScvImage *LoadFile(char *fileName) //出错返回NULL
     return Image;
 }
 
-ScvImage *GrayscaleProc(ScvImage *Image1)
+void GrayscaleProc(ScvImage *Image1)
 {
-    RGBQUAD *pColorTable;
-    int linewidth = Image1->widthByte, height = Image1->bmpiHeader->biHeight;
-    int i;
+    RGBQUAD *pColorTable = (RGBQUAD *)malloc(256);
+    int linewidth = Image1->widthByte;
+    int height = Image1->bmpiHeader->biHeight;
+    int i, j, y;
+    BYTE *pBmpBuf, *pBmpBuf1;
+    unsigned char *pb1, *pb2;
+
     //修改文件头,其中有两项需要修改，分别为bfSize和bfOffBits
     Image1->bmpfHeader->bfSize = 14 + 40 + 256 * sizeof(RGBQUAD) + linewidth * height;
     Image1->bmpfHeader->bfOffBits = 14 + 40 + 256 * sizeof(RGBQUAD);
@@ -113,7 +122,6 @@ ScvImage *GrayscaleProc(ScvImage *Image1)
     Image1->bmpiHeader->biBitCount = 8;
     Image1->bmpiHeader->biSizeImage = linewidth * height;
 
-    pColorTable = new RGBQUAD[256];
     for (i = 0; i < 256; i++)
     {
         pColorTable[i].rgbRed = i;
@@ -121,7 +129,50 @@ ScvImage *GrayscaleProc(ScvImage *Image1)
         pColorTable[i].rgbBlue = i;
     }
     Image1->bmpRgb = pColorTable;
-    
+    for (i = 0; i < height; i++)
+    {
+        for (j = 0; j < linewidth; j++)
+        {
+            pb1 = pBmpBuf + i * linewidth + j * 3;
+            y = *(pb1)*0.299 + *(pb1 + 1) * 0.587 + *(pb1 + 2) * 0.114; //将每一个像素都按公式y=B*0.299+G*0.587+R*0.114进行转化
+            pb2 = pBmpBuf1 + i * linewidth + j;
+            *pb2 = y;
+        }
+    }
+    Image1->data = pBmpBuf1;
+}
+void saveImageToBmp(ScvImage *image, char *filename)
+{
+    // int imageByteCount = image->widthBytes * image->height;
+
+    // BitmapFileHeader fileHeader = {0};
+    // fileHeader.bfType = 0x4D42; // "BM"
+    // fileHeader.bfSize = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader) + imageByteCount;
+    // fileHeader.bfOffBits = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader);
+
+    // BitmapInfoHeader infoHeader = {0};
+    // infoHeader.biSize = sizeof(BitmapInfoHeader);
+    // infoHeader.biHeight = image->origin ? image->height : -image->height;
+    // infoHeader.biWidth = image->width;
+    // infoHeader.biPlanes = 1;
+    // infoHeader.biBitCount = 24;
+    // infoHeader.biSizeImage = imageByteCount;
+    // infoHeader.biCompression = 0;
+    BITMAPFILEHEADER *fileHeader = image->bmpfHeader;
+    BITMAPINFOHEADER *infoHeader = image->bmpiHeader;
+    RGBQUAD *rgb = image->bmpRgb;
+
+    int lineByte = image->widthByte;
+    int height = image->bmpiHeader->biHeight;
+
+    FILE *bmpFile = fopen(filename, "wb");
+    if (bmpFile != NULL)
+    {
+        fwrite(&fileHeader, sizeof(BITMAPFILEHEADER), 1, bmpFile);
+        fwrite(&infoHeader, sizeof(BITMAPINFOHEADER), 1, bmpFile);
+        fwrite(image->data, lineByte * height, 1, bmpFile);
+        fclose(bmpFile);
+    }
 }
 
 void printBmpHead(BITMAPFILEHEADER *BFileHead)

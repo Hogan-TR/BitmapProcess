@@ -1,2 +1,1 @@
-foHead(&bitinfoHead);
-        printf("\n
+new
