@@ -8,9 +8,10 @@ int main()
     int Tf;
     CvImage *img = LoadFile("2.bmp");
     CvImage *RotImg;
-    GrayscaleProc(img);
+    if (img->biBitCount == 24)
+        GrayscaleProc(img);
     RotImg = RoateFile(img, 73);
-    Tf = OutFile("t1.bmp", RotImg);
+    Tf = OutFile("t2x.bmp", RotImg);
     if (Tf)
         printf("Fail!");
     return 0;
@@ -39,7 +40,7 @@ CvImage *LoadFile(char *path)
     height = bitinfoHead.biHeight;
     biBitCount = bitinfoHead.biBitCount;
     widthByte = (width * biBitCount / 8 + 3) / 4 * 4;
-
+    gwidthByte = (width * 8 / 8 + 3) / 4 * 4;
     // printf("\t位图文件头\n");
     // printf("文件类型：%d\n", bitHead.bfType);
     // printf("文件大小: %d\n", bitHead.bfSize);
@@ -60,21 +61,13 @@ CvImage *LoadFile(char *path)
     // printf("使用的颜色数: %d\n", bitinfoHead.biClrUsed);
     // printf("重要颜色数: %d\n", bitinfoHead.biClrImportant);
 
-    if (biBitCount == 24)
-    {
-        gwidthByte = (width * 8 / 8 + 3) / 4 * 4;
-        bitHead.bfSize = 14 + 40 + 256 * sizeof(RGBQUAD) + gwidthByte * height;
-        bitHead.bfOffBits = 14 + 40 + 256 * sizeof(RGBQUAD);
-
-        bitinfoHead.biBitCount = 8;
-        bitinfoHead.biSizeImage = gwidthByte * height;
-    }
     if (biBitCount == 8)
     {
         rgb = (RGBQUAD *)malloc(sizeof(RGBQUAD) * 256);
         fread(rgb, sizeof(RGBQUAD), 256, pfile);
         free(rgb);
     }
+
     bmgImg->imageData = (BYTE *)malloc(widthByte * height);
     fread(bmgImg->imageData, widthByte * height, 1, pfile);
     fclose(pfile);
@@ -83,6 +76,7 @@ CvImage *LoadFile(char *path)
     bmgImg->height = height;
     bmgImg->widthByte = widthByte;
     bmgImg->gwidthByte = gwidthByte;
+    bmgImg->biBitCount = biBitCount;
 
     return bmgImg;
 }
@@ -202,5 +196,6 @@ CvImage *RoateFile(CvImage *bmpImg, int INangle)
     }
     bmpImgT->widthByte = bmpImg->widthByte;
     bmpImgT->gwidthByte = bmpImg->gwidthByte;
+    bmpImgT->biBitCount = bmpImg->biBitCount;
     return bmpImgT;
 }

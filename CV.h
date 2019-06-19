@@ -56,7 +56,8 @@ typedef struct
     int height;
     int widthByte;
     int gwidthByte;
-    unsigned char *imageData;
+    int biBitCount;
+    BYTE *imageData;
 } CvImage;
 #pragma pack(pop) //»Ö¸´¶ÔÆë×´Ì¬
 
