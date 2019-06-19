@@ -3,8 +3,8 @@
 
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
-typedef unsigned long DWORD;
-typedef long LONG;
+typedef unsigned int DWORD;
+typedef int LONG;
 
 #pragma pack(1)
 typedef struct tagBITMAPFILEHEADER //位图头文件定义
@@ -60,6 +60,7 @@ typedef struct ScvImage {
     BYTE *data;
     int biBitCount;
     int widthByte;
+    int gwidthByte;
 } ScvImage;
 
 #endif
