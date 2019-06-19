@@ -10,18 +10,22 @@ int main()
     ScvImage *Image;
     char strFilePath[50] = {0}; //文件地址
     char strOutPath[50] = {0};  //储存地址
+    int angle;
 
     printf("Please input the path of .bmp file.\n");
     scanf("%s", strFilePath);
     printf("Please input the path of outFile.\n");
     scanf("%s", strOutPath);
+    printf("Please input the angle you want to Rotate:\n");
+    scanf("%d", &angle);
+
     FILE *pfile = fopen(strFilePath, "rb");
     FILE *bmpFile = fopen(strOutPath, "wb");
 
     Image = LoadFile(strFilePath, pfile);
     if (Image->biBitCount == 24)
         GrayscaleProc(Image);
-
+    RotatingProc(Image, angle);
     saveImageToBmp(Image, bmpFile);
     return 0;
 }
@@ -122,7 +126,7 @@ void GrayscaleProc(ScvImage *Image1)
     int nLineStart, ngLineStart;
     int red, green, blue;
     // BYTE *pBmpBuf, *pBmpBuf1;
-    // unsigned char *pb1, *pb2;
+    // BYTE *pb1, *pb2;
 
     //修改文件头,其中有两项需要修改，分别为bfSize和bfOffBits
     Image1->bmpfHeader->bfSize = 14 + 40 + 256 * sizeof(RGBQUAD) + Image1->gwidthByte * height;
@@ -131,7 +135,7 @@ void GrayscaleProc(ScvImage *Image1)
     Image1->bmpiHeader->biBitCount = 8;
     Image1->bmpiHeader->biSizeImage = Image1->gwidthByte * height;
 
-    for (i = 0; i < 256; i++)
+    for (i = 0; i < 256; i++) //写入函数时写
     {
         pColorTable[i].rgbRed = i;
         pColorTable[i].rgbGreen = i;
@@ -151,7 +155,7 @@ void GrayscaleProc(ScvImage *Image1)
     // }
     for (i = 0; i < height; i++)
     {
-        nLineStart = linewidth * i; // 24 位真彩图行值
+        nLineStart = linewidth * i;   // 24 位真彩图行值
         ngLineStart = glinewidth * i; // 灰度图行值
         for (j = 0; j < linewidth; j++)
         {
@@ -224,4 +228,126 @@ void printBmpInfoHead(BITMAPINFOHEADER *BInfoHead)
 void printRgbQuan(RGBQUAD *fRGB)
 {
     printf("(%-3d,%-3d,%-3d)", fRGB->rgbRed, fRGB->rgbGreen, fRGB->rgbBlue);
+}
+
+void RotatingProc(ScvImage *ImageR, int Angle)
+{
+    // int width = ImageR->bmpiHeader->biWidth;
+    // int height = ImageR->bmpiHeader->biHeight;
+    // int RotateAngle;                            //要旋转的角度数
+    // double angle;                               //要旋转的弧度数
+    // int midX_pre, midY_pre, midX_aft, midY_aft; //旋转所围绕的中心点的坐标
+    // int pre_i, pre_j, after_i, after_j;         //旋转前后对应的像素点坐标
+    // int i, j;
+    // midX_pre = width / 2;
+    // midY_pre = height / 2;
+    // midX_aft = width;
+    // midY_aft = height;
+
+    // printf("输入要旋转的角度（0度到360度，逆时针旋转）：\n");
+    // scanf("%d", &RotateAngle);
+    // angle = 1.0 * RotateAngle * PI / 180;
+    // for (i = 0; i < 2 * height; ++i)
+    // {
+    //     for (j = 0; j < 2 * width; ++j)
+    //     {
+    //         after_i = i - midX_aft; //坐标变换
+    //         after_j = j - midY_aft;
+    //         pre_i = (int)(cos((double)angle) * after_i - sin((double)angle) * after_j) + midX_pre;
+    //         pre_j = (int)(sin((double)angle) * after_i + cos((double)angle) * after_j) + midY_pre;
+    //         if (pre_i >= 0 && pre_i < height && pre_j >= 0 && pre_j < width) //在原图范围内
+    //             *(imagedataRot + i * 2 * width + j) = *(imagedata + pre_i * width + pre_j);
+    //     }
+    // }
+
+    //图片旋转处理
+    /*ScvImage *bmpImgRot;*/
+    // BITMAPFILEHEADER *f1 = ImageR->bmpfHeader;
+    BITMAPINFOHEADER *f2 = ImageR->bmpiHeader;
+    BYTE *sData = ImageR->data;
+    double angle; //要旋转的弧度数
+    int width = f2->biWidth;
+    int height = f2->biHeight;
+    int step = 0;
+    int Rot_step = 0;
+    int channels = 1;
+    int i, j, k;
+    int midX_pre, midY_pre, midX_aft, midY_aft; //旋转前后的中心点的坐标
+    int pre_i, pre_j, after_i, after_j;         //旋转前后对应的像素点坐标
+
+
+    midX_pre = width / 2;
+    midY_pre = height / 2;
+
+    angle = 1.0 * Angle * PI / 180;
+    //初始化旋转后图片的信息
+    /*
+    
+    bmpImgRot = (ScvImage *)malloc(sizeof(ScvImage));
+    bmpImgRot->channels = channels;
+    bmpImgRot->width = ImageR->width;
+    bmpImgRot->height = ImageR->height;
+    
+     */
+    midX_aft = width / 2;
+    midY_aft = height / 2;
+    step = channels * width;
+    Rot_step = channels * width; //可能linwidth
+    BYTE *xData = (BYTE *)malloc(sizeof(BYTE) * width * height * channels);
+    if (channels == 1)
+    {
+        //初始化旋转图像
+        for (i = 0; i < height; i++)
+        {
+            for (j = 0; j < width; j++)
+            {
+                xData[(height - 1 - i) * Rot_step + j] = 0;
+            }
+        }
+        //坐标变换
+        for (i = 0; i < height; i++)
+        {
+            for (j = 0; j < width; j++)
+            {
+                after_i = i - midX_aft;
+                after_j = j - midY_aft;
+                pre_i = (int)(cos((double)angle) * after_i - sin((double)angle) * after_j) + midX_pre;
+                pre_j = (int)(sin((double)angle) * after_i + cos((double)angle) * after_j) + midY_pre;
+                if (pre_i >= 0 && pre_i < height && pre_j >= 0 && pre_j < width) //在原图范围内
+                    xData[i * Rot_step + j] = sData[pre_i * step + pre_j];
+            }
+        }
+    }
+    ImageR->data = xData;
+    // else if (channels == 3)
+    // {
+    //     //初始化旋转图像
+    //     for (i = 0; i < bmpImgRot->height; i++)
+    //     {
+    //         for (j = 0; j < bmpImgRot->width; j++)
+    //         {
+    //             for (k = 0; k < 3; k++)
+    //             {
+    //                 bmpImgRot->imageData[(bmpImgRot->height - 1 - i) * Rot_step + j * 3 + k] = 0;
+    //             }
+    //         }
+    //     }
+    //     //坐标变换
+    //     for (i = 0; i < bmpImgRot->height; i++)
+    //     {
+    //         for (j = 0; j < bmpImgRot->width; j++)
+    //         {
+    //             after_i = i - midX_aft;
+    //             after_j = j - midY_aft;
+    //             pre_i = (int)(cos((double)angle) * after_i - sin((double)angle) * after_j) + midX_pre;
+    //             pre_j = (int)(sin((double)angle) * after_i + cos((double)angle) * after_j) + midY_pre;
+
+    //             if (pre_i >= 0 && pre_i < height && pre_j >= 0 && pre_j < width) //在原图范围内
+    //                 for (k = 0; k < 3; k++)
+    //                 {
+    //                     bmpImgRot->imageData[i * Rot_step + j * 3 + k] = ImageR->imageData[pre_i * step + pre_j * 3 + k];
+    //                 }
+    //         }
+    //     }
+    // }
 }

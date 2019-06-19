@@ -1,10 +1,13 @@
 #ifndef __MYFILE_H__
 #define __MYFILE_H__
 
+#define PI 3.14159
+
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
 typedef unsigned int DWORD;
 typedef int LONG;
+
 
 #pragma pack(1)
 typedef struct tagBITMAPFILEHEADER //位图头文件定义
