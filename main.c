@@ -5,21 +5,101 @@
 
 int main()
 {
-    int Tf;
-    char fileName[100], fileW[100];
-    scanf("%s", fileName);
-    scanf("%s", fileW);
-    CvImage *img = LoadFile(fileName);
-    CvImage *RotImg;
-    if (img->biBitCount == 24)
-        GrayscaleProc(img);
-    RotImg = RoateFile(img, 30);
-    Tf = OutFile(fileW, RotImg);
-    if (Tf)
-        printf("Fail!");
+    // int Tf,choice;
+    // char fileName[100], fileW[100]; //输入输出路径
+    // int Angle;                      //待旋转角度
+    // printf("---------数字图像处理 旋转变换---------\n");
+    // printf("请选择以下功能:\n"
+    //        "1.图像灰度处理\n"
+    //        "2.图片旋转\n");
+    // // scanf("%d",&choice);
+    // // switch (choice)
+    // // {
+    // // case 1:
+    // //     /* code */
+    // //     break;
+
+    // // default:
+    // //     break;
+    // // }
+    // scanf("%s", fileName);
+    // scanf("%s", fileW);
+    // CvImage *img = LoadFile(fileName);
+    // CvImage *RotImg;
+    // if (img->biBitCount == 24)
+    //     GrayscaleProc(img);
+    // RotImg = RoateFile(img, 45);
+    // Tf = OutFile(fileW, RotImg);
+    // if (Tf)
+    //     printf("Fail!");
+    // return 0;
+    char InPath[100], OutPath[100];
+    int choice;
+    int angle;
+    int f1, f2, Tf;
+    CvImage *img, *RotImg;
+    printf("\n<<------ 数字图像处理 图像旋转 ------>>\n\n");
+    printf("1.图片信息读取\n"
+           "2.图片灰度处理\n"
+           "3.图片旋转处理\n"
+           "4.退出程序\n\n");
+    while (1)
+    {
+        f1 = 0;
+        printf("请从以上选项选择功能(输4退出):\n");
+        scanf("%d", &choice);
+        switch (choice)
+        {
+        case 1:
+            f1 = 1;
+            f2 = 0;
+            break;
+        case 2:
+            f1 = 2;
+            f2 = 0;
+            break;
+        case 3:
+            f1 = 2;
+            f2 = 1;
+            break;
+        case 4:
+            exit(1);
+        default:
+            printf("\n输入项错误,请重新尝试.\n");
+            break;
+        }
+
+        if (f1 == 1)
+        {
+            printf("请输入待处理bmp文件地址：");
+            scanf("%s", InPath);
+            img = LoadFile(InPath, 1);
+        }
+        else if (f1 == 2)
+        {
+            printf("请输入输入输出地址：");
+            scanf("%s", InPath);
+            scanf("%s", OutPath);
+            img = LoadFile(InPath, 0);
+            if (img->biBitCount == 24)
+                GrayscaleProc(img);
+            if (f2)
+            {
+                printf("请输入旋转角度：");
+                scanf("%d", &angle);
+                angle = angle % 360;
+                img = RoateFile(img, angle);
+            }
+            Tf = OutFile(OutPath, img);
+            if (Tf)
+                printf("图片输出成功.\n\n");
+            else
+                printf("图片输出失败.\n\n");
+        }
+    }
     return 0;
 }
-CvImage *LoadFile(char *path)
+CvImage *LoadFile(char *path, int print)
 {
     FILE *pfile;
     CvImage *bmpImg = (CvImage *)malloc(sizeof(CvImage));
@@ -47,25 +127,29 @@ CvImage *LoadFile(char *path)
     biBitCount = bitinfoHead.biBitCount;
     widthByte = (width * biBitCount / 8 + 3) / 4 * 4;
     gwidthByte = (width * 8 / 8 + 3) / 4 * 4;
-    // printf("\t位图文件头\n");
-    // printf("文件类型：%d\n", bitHead.bfType);
-    // printf("文件大小: %d\n", bitHead.bfSize);
-    // printf("保留字: %d\n", bitHead.bfReserved1);
-    // printf("保留字: %d\n", bitHead.bfReserved2);
-    // printf("实际位图数据的偏移字节数: %d\n", bitHead.bfOffBits);
 
-    // printf("\t位图信息头\n");
-    // printf("结构体的长度: %d\n", bitinfoHead.biSize);
-    // printf("位图宽: %d\n", bitinfoHead.biWidth);
-    // printf("位图高: %d\n", bitinfoHead.biHeight);
-    // printf("biPlanes平面数: %d\n", bitinfoHead.biPlanes);
-    // printf("biBitCount采用颜色位数: %d\n", bitinfoHead.biBitCount);
-    // printf("压缩方式: %d\n", bitinfoHead.biCompression);
-    // printf("biSizeImage实际位图数据占用的字节数: %d\n", bitinfoHead.biSizeImage);
-    // printf("X方向分辨率: %d\n", bitinfoHead.biXPelsPerMeter);
-    // printf("Y方向分辨率: %d\n", bitinfoHead.biYPelsPerMeter);
-    // printf("使用的颜色数: %d\n", bitinfoHead.biClrUsed);
-    // printf("重要颜色数: %d\n", bitinfoHead.biClrImportant);
+    if (print)
+    {
+        printf("\n\t位图文件头\n");
+        printf("文件类型：%d\n", bitHead.bfType);
+        printf("文件大小: %d\n", bitHead.bfSize);
+        printf("保留字: %d\n", bitHead.bfReserved1);
+        printf("保留字: %d\n", bitHead.bfReserved2);
+        printf("实际位图数据的偏移字节数: %d\n\n", bitHead.bfOffBits);
+
+        printf("\t位图信息头\n");
+        printf("结构体的长度: %d\n", bitinfoHead.biSize);
+        printf("位图宽: %d\n", bitinfoHead.biWidth);
+        printf("位图高: %d\n", bitinfoHead.biHeight);
+        printf("biPlanes平面数: %d\n", bitinfoHead.biPlanes);
+        printf("biBitCount采用颜色位数: %d\n", bitinfoHead.biBitCount);
+        printf("压缩方式: %d\n", bitinfoHead.biCompression);
+        printf("biSizeImage实际位图数据占用的字节数: %d\n", bitinfoHead.biSizeImage);
+        printf("X方向分辨率: %d\n", bitinfoHead.biXPelsPerMeter);
+        printf("Y方向分辨率: %d\n", bitinfoHead.biYPelsPerMeter);
+        printf("使用的颜色数: %d\n", bitinfoHead.biClrUsed);
+        printf("重要颜色数: %d\n\n", bitinfoHead.biClrImportant);
+    }
 
     if (biBitCount == 8)
     {
@@ -207,6 +291,7 @@ int OutFile(char *path, CvImage *bmpImg)
         }
     }
     fclose(pfile);
+    return 1;
 }
 void GrayscaleProc(CvImage *bmpImg)
 {
@@ -250,7 +335,7 @@ CvImage *RoateFile(CvImage *bmpImg, int INangle)
 
     midX_pre = width / 2;
     midY_pre = height / 2;
-    angle = 1.0 * INangle * PI / 100;
+    angle = 1.0 * INangle * PI / 180;
 
     bmpImgT = (CvImage *)malloc(sizeof(CvImage));
     bmpImgT->width = width;

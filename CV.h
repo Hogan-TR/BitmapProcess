@@ -61,7 +61,7 @@ typedef struct
 } CvImage;
 #pragma pack(pop) //»Ö¸´¶ÔÆë×´Ì¬
 
-CvImage *LoadFile(char *);
+CvImage *LoadFile(char *,int);
 int OutFile(char *, CvImage *);
 void GrayscaleProc(CvImage *);
 CvImage *RoateFile(CvImage *, int);
