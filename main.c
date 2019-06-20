@@ -6,12 +6,15 @@
 int main()
 {
     int Tf;
-    CvImage *img = LoadFile("2.bmp");
+    char fileName[100], fileW[100];
+    scanf("%s", fileName);
+    scanf("%s", fileW);
+    CvImage *img = LoadFile(fileName);
     CvImage *RotImg;
     if (img->biBitCount == 24)
         GrayscaleProc(img);
-    RotImg = RoateFile(img, 73);
-    Tf = OutFile("t2x.bmp", RotImg);
+    RotImg = RoateFile(img, 30);
+    Tf = OutFile(fileW, RotImg);
     if (Tf)
         printf("Fail!");
     return 0;
@@ -19,17 +22,20 @@ int main()
 CvImage *LoadFile(char *path)
 {
     FILE *pfile;
-    CvImage *bmgImg = (CvImage *)malloc(sizeof(CvImage));
+    CvImage *bmpImg = (CvImage *)malloc(sizeof(CvImage));
     BITMAPFILEHEADER bitHead;
     BITMAPINFOHEADER bitinfoHead;
     RGBQUAD *rgb;
     int width, height, biBitCount;
     int widthByte, gwidthByte;
+    int i, j, k;
+    int channels, step, offset;
+    BYTE pixVal;
 
     if ((pfile = fopen(path, "rb")) == NULL)
     {
         printf("File open failed.\n");
-        free(bmgImg);
+        free(bmpImg);
         return NULL;
     }
 
@@ -66,31 +72,89 @@ CvImage *LoadFile(char *path)
         rgb = (RGBQUAD *)malloc(sizeof(RGBQUAD) * 256);
         fread(rgb, sizeof(RGBQUAD), 256, pfile);
         free(rgb);
-    }
 
-    bmgImg->imageData = (BYTE *)malloc(widthByte * height);
-    fread(bmgImg->imageData, widthByte * height, 1, pfile);
+        channels = 1;
+        step = channels * width;
+        offset = step % 4;
+        if (offset != 0)
+            offset = 4 - offset;
+        bmpImg->imageData = (BYTE *)malloc(sizeof(BYTE) * width * height);
+        for (i = 0; i < height; i++)
+        {
+            for (j = 0; j < width; j++)
+            {
+                fread(&pixVal, sizeof(BYTE), 1, pfile);
+                bmpImg->imageData[(height - 1 - i) * step + j] = pixVal;
+            }
+            if (offset != 0)
+            {
+                for (j = 0; j < offset; j++)
+                {
+                    fread(&pixVal, sizeof(BYTE), 1, pfile);
+                }
+            }
+        }
+    }
+    else if (biBitCount == 24)
+    {
+        channels = 3;
+        bmpImg->imageData = (BYTE *)malloc(sizeof(BYTE) * width * 3 * height);
+        step = channels * width;
+        //windows规定每一个扫描行为4的倍数，不足补0
+        offset = step % 4;
+        if (offset != 0)
+        {
+            offset = 4 - offset;
+        }
+        //读取彩色图像数据
+        for (i = 0; i < height; i++)
+        {
+            for (j = 0; j < width; j++)
+            {
+                for (k = 0; k < 3; k++)
+                {
+                    fread(&pixVal, sizeof(unsigned char), 1, pfile);
+                    bmpImg->imageData[(height - 1 - i) * step + j * 3 + k] = pixVal;
+                }
+            }
+            if (offset != 0)
+            {
+                for (j = 0; j < offset; j++)
+                {
+                    fread(&pixVal, sizeof(unsigned char), 1, pfile);
+                }
+            }
+        }
+    }
     fclose(pfile);
 
-    bmgImg->width = width;
-    bmgImg->height = height;
-    bmgImg->widthByte = widthByte;
-    bmgImg->gwidthByte = gwidthByte;
-    bmgImg->biBitCount = biBitCount;
+    bmpImg->width = width;
+    bmpImg->height = height;
+    bmpImg->widthByte = widthByte;
+    bmpImg->gwidthByte = gwidthByte;
+    bmpImg->biBitCount = biBitCount;
 
-    return bmgImg;
+    return bmpImg;
 }
 
-int OutFile(char *path, CvImage *bmgImg)
+int OutFile(char *path, CvImage *bmpImg)
 {
     FILE *pfile;
     BITMAPFILEHEADER bitHead;
     BITMAPINFOHEADER bitinfoHead;
     RGBQUAD *rgb;
-    int width = bmgImg->width;
-    int height = bmgImg->height;
-    int gwidthByte = bmgImg->gwidthByte;
-    int i, j;
+    BYTE pixVal = '\0';
+    int width = bmpImg->width;
+    int height = bmpImg->height;
+    int gwidthByte = bmpImg->gwidthByte;
+    int i, j, step, channels = 1, offset;
+    step = width * channels;
+    offset = step % 4;
+    if (offset != 0)
+    {
+        offset = 4 - offset;
+        step += offset;
+    }
 
     if ((pfile = fopen(path, "wb")) == NULL)
         return 0; //0假，1真
@@ -125,26 +189,51 @@ int OutFile(char *path, CvImage *bmgImg)
     }
     fwrite(rgb, sizeof(RGBQUAD), 256, pfile);
     free(rgb);
-    fwrite(bmgImg->imageData, gwidthByte * height, 1, pfile);
+    // fwrite(bmpImg->imageData, gwidthByte * height, 1, pfile);
+    for (i = height - 1; i > -1; i--)
+    {
+        for (j = 0; j < width; j++)
+        {
+            pixVal = bmpImg->imageData[i * width + j];
+            fwrite(&pixVal, sizeof(BYTE), 1, pfile);
+        }
+        if (offset != 0)
+        {
+            for (j = 0; j < offset; j++)
+            {
+                pixVal = 0;
+                fwrite(&pixVal, sizeof(BYTE), 1, pfile);
+            }
+        }
+    }
     fclose(pfile);
 }
 void GrayscaleProc(CvImage *bmpImg)
 {
     BYTE *Idata = bmpImg->imageData;
+    BYTE *Ldata;
     int width = bmpImg->width;
     int height = bmpImg->height;
     int widthByte = bmpImg->widthByte;
     int gwidthByte = bmpImg->gwidthByte;
     int i, j;
     int nLineStart, ngLineStart;
-
+    Ldata = (BYTE *)malloc(sizeof(BYTE) * width * height);
+    // for (i = 0; i < height; i++)
+    // {
+    //     nLineStart = widthByte * i;
+    //     ngLineStart = gwidthByte * i;
+    //     for (j = 0; j < gwidthByte; j++)
+    //         Idata[ngLineStart + j] = (int)((float)*(Idata + nLineStart + 3 * j) * 0.114 + (float)*(Idata + nLineStart + 3 * j + 1) * 0.587 + (float)*(Idata + nLineStart + 3 * j + 2) * 0.299);
+    // }
     for (i = 0; i < height; i++)
     {
-        nLineStart = widthByte * i;
-        ngLineStart = gwidthByte * i;
-        for (j = 0; j < gwidthByte; j++)
-            Idata[ngLineStart + j] = (int)((float)*(Idata + nLineStart + 3 * j) * 0.114 + (float)*(Idata + nLineStart + 3 * j + 1) * 0.587 + (float)*(Idata + nLineStart + 3 * j + 2) * 0.299);
+        for (j = 0; j < width; j++)
+        {
+            Ldata[(height - 1 - i) * 1 * width + j] = (int)((float)Idata[(height - 1 - i) * 3 * width + j * 3] * 0.114 + (float)Idata[(height - 1 - i) * 3 * width + j * 3 + 1] * 0.587 + (float)Idata[(height - 1 - i) * 3 * width + j * 3 + 2] * 0.299);
+        }
     }
+    bmpImg->imageData = Ldata;
 }
 CvImage *RoateFile(CvImage *bmpImg, int INangle)
 {
