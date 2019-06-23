@@ -41,15 +41,6 @@ typedef struct tagRGBQUAD //调色板定义
     BYTE rgbReserved; //保留值
 } RGBQUAD;
 
-// #pragma pack(1)
-// typedef struct tagIMAGEDATA //像素信息
-// {
-//     BYTE red;
-//     BYTE green;
-//     BYTE blue;
-// } IMAGEDATA;
-// #pragma pack()
-
 typedef struct
 {
     int width;
@@ -61,7 +52,7 @@ typedef struct
 } CvImage;
 #pragma pack(pop) //恢复对齐状态
 
-CvImage *LoadFile(char *,int);
+CvImage *LoadFile(char *, int);
 int OutFile(char *, CvImage *);
 void GrayscaleProc(CvImage *);
 CvImage *RoateFile(CvImage *, int);
