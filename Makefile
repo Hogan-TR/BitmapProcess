@@ -1,7 +1,8 @@
-object = bmpImg.o
+object = io.o test.o
 all : $(object)
 	cc -o all $(object) -lm
-bmpImg.o : bmpImg.c
+io.o : cv.h
+test.o : test.c io.c cv.h
 .PHONY : clean
 clean : 
-	rm -r all $(object)
+	rm -r all $(object)  Get.bmp
