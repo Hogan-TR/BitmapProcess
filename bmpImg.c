@@ -10,36 +10,36 @@ typedef unsigned int DWORD;
 typedef int LONG;
 
 #pragma pack(push, 1)
-typedef struct  //Î»Í¼Í·ÎÄ¼ş¶¨Òå
+typedef struct  //ä½å›¾å¤´æ–‡ä»¶å®šä¹‰
 {
-    WORD bfType;      //Î»Í¼Àà±ğ£¬'BM', 2
-    DWORD bfSize;     //ÎÄ¼ş´óĞ¡, 4
-    WORD bfReserved1; //±£Áô×Ö, 2
-    WORD bfReserved2; //±£Áô×Ö, 2
-    DWORD bfOffBits;  //´ÓÎÄ¼şÍ·µ½Êµ¼ÊÎ»Í¼Êı¾İµÄÆ«ÒÆ×Ö½ÚÊı, 4
+    WORD bfType;      //ä½å›¾ç±»åˆ«ï¼Œ'BM', 2
+    DWORD bfSize;     //æ–‡ä»¶å¤§å°, 4
+    WORD bfReserved1; //ä¿ç•™å­—, 2
+    WORD bfReserved2; //ä¿ç•™å­—, 2
+    DWORD bfOffBits;  //ä»æ–‡ä»¶å¤´åˆ°å®é™…ä½å›¾æ•°æ®çš„åç§»å­—èŠ‚æ•°, 4
 } BITMAPFILEHEADER;
 
-typedef struct  //Î»Í¼ĞÅÏ¢Í·¶¨Òå
+typedef struct  //ä½å›¾ä¿¡æ¯å¤´å®šä¹‰
 {
-    DWORD biSize;         //ĞÅÏ¢Í·´óĞ¡, 4
-    LONG biWidth;         //Í¼Ïñ¿í¶È, 4
-    LONG biHeight;        //Í¼Ïñ¸ß¶È, 4
-    WORD biPlanes;        //Ä¿±êÉè±¸µÄ¼¶±ğ£¬±ØĞëÊÇ1, 2
-    WORD biBitCount;      //Ã¿ÏñËØÎ»Êı, 2
-    DWORD biCompression;  //Ñ¹ËõÀàĞÍ, 4
-    DWORD biSizeImage;    //Ñ¹ËõÍ¼Ïñ´óĞ¡×Ö½ÚÊı, 4
-    LONG biXPelsPerMeter; //Ë®Æ½·Ö±æÂÊ, 4
-    LONG biYPelsPerMeter; //´¹Ö±·Ö±æÂÊ, 4
-    DWORD biClrUsed;      //Î»Í¼Êµ¼ÊÓÃµ½µÄÉ«²ÊÊı, 4
-    DWORD biClrImportant; //Î»Í¼ÖĞÖØÒªµÄÉ«²ÊÊı, 4
+    DWORD biSize;         //ä¿¡æ¯å¤´å¤§å°, 4
+    LONG biWidth;         //å›¾åƒå®½åº¦, 4
+    LONG biHeight;        //å›¾åƒé«˜åº¦, 4
+    WORD biPlanes;        //ç›®æ ‡è®¾å¤‡çš„çº§åˆ«ï¼Œå¿…é¡»æ˜¯1, 2
+    WORD biBitCount;      //æ¯åƒç´ ä½æ•°, 2
+    DWORD biCompression;  //å‹ç¼©ç±»å‹, 4
+    DWORD biSizeImage;    //å‹ç¼©å›¾åƒå¤§å°å­—èŠ‚æ•°, 4
+    LONG biXPelsPerMeter; //æ°´å¹³åˆ†è¾¨ç‡, 4
+    LONG biYPelsPerMeter; //å‚ç›´åˆ†è¾¨ç‡, 4
+    DWORD biClrUsed;      //ä½å›¾å®é™…ç”¨åˆ°çš„è‰²å½©æ•°, 4
+    DWORD biClrImportant; //ä½å›¾ä¸­é‡è¦çš„è‰²å½©æ•°, 4
 } BITMAPINFOHEADER;
 
-typedef struct  //µ÷É«°å¶¨Òå
+typedef struct  //è°ƒè‰²æ¿å®šä¹‰
 {
-    BYTE rgbBlue;     //À¶É«Öµ
-    BYTE rgbGreen;    //ÂÌÉ«Öµ
-    BYTE rgbRed;      //ºìÉ«Öµ
-    BYTE rgbReserved; //±£ÁôÖµ
+    BYTE rgbBlue;     //è“è‰²å€¼
+    BYTE rgbGreen;    //ç»¿è‰²å€¼
+    BYTE rgbRed;      //çº¢è‰²å€¼
+    BYTE rgbReserved; //ä¿ç•™å€¼
 } RGBQUAD;
 
 typedef struct
@@ -51,7 +51,7 @@ typedef struct
     int biBitCount;
     BYTE *imageData;
 } CvImage;
-#pragma pack(pop) //»Ö¸´¶ÔÆë×´Ì¬
+#pragma pack(pop) //æ¢å¤å¯¹é½çŠ¶æ€
 
 CvImage *LoadFile(char *, int);
 int OutFile(char *, CvImage *);
@@ -60,20 +60,20 @@ CvImage *RoateFile(CvImage *, int);
 
 int main()
 {
-    char InPath[100], OutPath[100]; // ÊäÈë¡¢Êä³öÂ·¾¶
+    char InPath[100], OutPath[100]; // è¾“å…¥ã€è¾“å‡ºè·¯å¾„
     int choice;
     int angle;
-    int f1, f2, Tf; //¹¦ÄÜÑ¡Ôñ±ê¼Ç£¬½á¹û±ê¼Ç
+    int f1, f2, Tf; //åŠŸèƒ½é€‰æ‹©æ ‡è®°ï¼Œç»“æœæ ‡è®°
     CvImage *img;
-    printf("\n<<------ Êı×ÖÍ¼Ïñ´¦Àí Í¼ÏñĞı×ª ------>>\n\n");
-    printf("1.Í¼Æ¬ĞÅÏ¢¶ÁÈ¡\n"
-           "2.Í¼Æ¬»Ò¶È´¦Àí\n"
-           "3.Í¼Æ¬Ğı×ª´¦Àí\n"
-           "4.ÍË³ö³ÌĞò\n\n");
-    while (1) //ÂÖÑ¯
+    printf("\n<<------ æ•°å­—å›¾åƒå¤„ç† å›¾åƒæ—‹è½¬ ------>>\n\n");
+    printf("1.å›¾ç‰‡ä¿¡æ¯è¯»å–\n"
+           "2.å›¾ç‰‡ç°åº¦å¤„ç†\n"
+           "3.å›¾ç‰‡æ—‹è½¬å¤„ç†\n"
+           "4.é€€å‡ºç¨‹åº\n\n");
+    while (1) //è½®è¯¢
     {
-        f1 = 0; //Ã¿Ò»´ÎÂÖÑ¯³õÊ¼»¯£¬f2²»±Ø³õÊ¼»¯
-        printf("Çë´ÓÒÔÉÏÑ¡ÏîÑ¡Ôñ¹¦ÄÜ(Êä4ÍË³ö):\n");
+        f1 = 0; //æ¯ä¸€æ¬¡è½®è¯¢åˆå§‹åŒ–ï¼Œf2ä¸å¿…åˆå§‹åŒ–
+        printf("è¯·ä»ä»¥ä¸Šé€‰é¡¹é€‰æ‹©åŠŸèƒ½(è¾“4é€€å‡º):\n");
         scanf("%d", &choice);
         switch (choice)
         {
@@ -92,42 +92,42 @@ int main()
         case 4:
             exit(1);
         default:
-            printf("\nÊäÈëÏî´íÎó,ÇëÖØĞÂ³¢ÊÔ.\n");
+            printf("\nè¾“å…¥é¡¹é”™è¯¯,è¯·é‡æ–°å°è¯•.\n");
             break;
         }
 
-        if (f1 == 1) //¹¦ÄÜ1
+        if (f1 == 1) //åŠŸèƒ½1
         {
-            printf("ÇëÊäÈë´ı´¦ÀíbmpÎÄ¼şµØÖ·£º");
+            printf("è¯·è¾“å…¥å¾…å¤„ç†bmpæ–‡ä»¶åœ°å€ï¼š");
             scanf("%s", InPath);
-            img = LoadFile(InPath, 1); //µÚ¶ş¸ö´«²ÎÎª1£¬ÔòÊä³öÍ¼Æ¬ĞÅÏ¢
+            img = LoadFile(InPath, 1); //ç¬¬äºŒä¸ªä¼ å‚ä¸º1ï¼Œåˆ™è¾“å‡ºå›¾ç‰‡ä¿¡æ¯
         }
-        else if (f1 == 2) //¹¦ÄÜ2+3
+        else if (f1 == 2) //åŠŸèƒ½2+3
         {
-            printf("ÇëÊäÈëÊäÈëÊä³öµØÖ·£º");
+            printf("è¯·è¾“å…¥è¾“å…¥è¾“å‡ºåœ°å€ï¼š");
             scanf("%s", InPath);
             scanf("%s", OutPath);
-            img = LoadFile(InPath, 0); // µÚ¶ş¸ö´«²ÎÎª0£¬Ôò²»Êä³öÍ¼Æ¬ĞÅÏ¢
-            if (img->biBitCount == 24) // bitBitCountÎª24ÔòÔò½øĞĞ»Ò¶È´¦Àí
+            img = LoadFile(InPath, 0); // ç¬¬äºŒä¸ªä¼ å‚ä¸º0ï¼Œåˆ™ä¸è¾“å‡ºå›¾ç‰‡ä¿¡æ¯
+            if (img->biBitCount == 24) // bitBitCountä¸º24åˆ™åˆ™è¿›è¡Œç°åº¦å¤„ç†
                 GrayscaleProc(img);
-            if (f2) //¹¦ÄÜ3
+            if (f2) //åŠŸèƒ½3
             {
-                printf("ÇëÊäÈëĞı×ª½Ç¶È£º");
+                printf("è¯·è¾“å…¥æ—‹è½¬è§’åº¦ï¼š");
                 scanf("%d", &angle);
-                angle = angle % 360; //·ÀÖ¹angle¹ı´ó
+                angle = angle % 360; //é˜²æ­¢angleè¿‡å¤§
                 img = RoateFile(img, angle);
             }
-            Tf = OutFile(OutPath, img); //TfÖµÎª 0 »ò 1£¬ÅĞ¶ÏÊÇ·ñ³É¹¦Êä³ö
+            Tf = OutFile(OutPath, img); //Tfå€¼ä¸º 0 æˆ– 1ï¼Œåˆ¤æ–­æ˜¯å¦æˆåŠŸè¾“å‡º
             if (Tf)
-                printf("Í¼Æ¬Êä³ö³É¹¦.\n\n");
+                printf("å›¾ç‰‡è¾“å‡ºæˆåŠŸ.\n\n");
             else
-                printf("Í¼Æ¬Êä³öÊ§°Ü.\n\n");
+                printf("å›¾ç‰‡è¾“å‡ºå¤±è´¥.\n\n");
         }
     }
     return 0;
 }
 
-//»Ò¶È´¦Àí
+//ç°åº¦å¤„ç†
 void GrayscaleProc(CvImage *bmpImg)
 {
     BYTE *Idata = bmpImg->imageData;
@@ -139,7 +139,7 @@ void GrayscaleProc(CvImage *bmpImg)
     int i, j;
     Ldata = (BYTE *)malloc(sizeof(BYTE) * width * height);
 
-    for (i = 0; i < height; i++) //»Ò¶È´¦Àí£¬ÈıºÏÒ»£¬¹«Ê½
+    for (i = 0; i < height; i++) //ç°åº¦å¤„ç†ï¼Œä¸‰åˆä¸€ï¼Œå…¬å¼
     {
         for (j = 0; j < width; j++)
         {
@@ -148,7 +148,7 @@ void GrayscaleProc(CvImage *bmpImg)
     }
     bmpImg->imageData = Ldata;
 }
-//Ğı×ª
+//æ—‹è½¬
 CvImage *RoateFile(CvImage *bmpImg, int INangle)
 {
     CvImage *bmpImgT;
@@ -159,12 +159,12 @@ CvImage *RoateFile(CvImage *bmpImg, int INangle)
     double angle;
     int i, j;
 
-    int midX_pre, midY_pre, midX_aft, midY_aft; //Ğı×ªÇ°ºóµÄÖĞĞÄµãµÄ×ø±ê
-    int pre_i, pre_j, after_i, after_j;         //Ğı×ªÇ°ºó¶ÔÓ¦µÄÏñËØµã×ø±ê
+    int midX_pre, midY_pre, midX_aft, midY_aft; //æ—‹è½¬å‰åçš„ä¸­å¿ƒç‚¹çš„åæ ‡
+    int pre_i, pre_j, after_i, after_j;         //æ—‹è½¬å‰åå¯¹åº”çš„åƒç´ ç‚¹åæ ‡
 
     midX_pre = width / 2;
     midY_pre = height / 2;
-    angle = 1.0 * INangle * PI / 180; //»¡¶È½Ç
+    angle = 1.0 * INangle * PI / 180; //å¼§åº¦è§’
 
     bmpImgT = (CvImage *)malloc(sizeof(CvImage));
     bmpImgT->width = width;
@@ -177,7 +177,7 @@ CvImage *RoateFile(CvImage *bmpImg, int INangle)
     Rot_step = 1 * bmpImgT->width;
     bmpImgT->imageData = (BYTE *)malloc(sizeof(BYTE) * bmpImgT->width * bmpImgT->height * 1);
 
-    //³õÊ¼»¯Ğı×ªÍ¼Ïñ
+    //åˆå§‹åŒ–æ—‹è½¬å›¾åƒ
     for (i = 0; i < bmpImgT->height; i++)
     {
         for (j = 0; j < bmpImgT->width; j++)
@@ -185,7 +185,7 @@ CvImage *RoateFile(CvImage *bmpImg, int INangle)
             bmpImgT->imageData[(bmpImgT->height - 1 - i) * Rot_step + j] = 0;
         }
     }
-    //Ğı×ªÍ¼Ïñ
+    //æ—‹è½¬å›¾åƒ
     for (i = 0; i < bmpImgT->height; i++)
     {
         for (j = 0; j < bmpImgT->width; j++)
@@ -194,26 +194,26 @@ CvImage *RoateFile(CvImage *bmpImg, int INangle)
             after_j = j - midY_aft;
             pre_i = (int)(cos((double)angle) * after_i - sin((double)angle) * after_j) + midX_pre;
             pre_j = (int)(sin((double)angle) * after_i + cos((double)angle) * after_j) + midY_pre;
-            if (pre_i >= 0 && pre_i < height && pre_j >= 0 && pre_j < width) //ÔÚÔ­Í¼·¶Î§ÄÚ
+            if (pre_i >= 0 && pre_i < height && pre_j >= 0 && pre_j < width) //åœ¨åŸå›¾èŒƒå›´å†…
                 bmpImgT->imageData[i * Rot_step + j] = bmpImg->imageData[pre_i * step + pre_j];
         }
     }
-    //¸³Öµ£¬·µ»ØĞÂ½á¹¹Ìå
+    //èµ‹å€¼ï¼Œè¿”å›æ–°ç»“æ„ä½“
     bmpImgT->widthByte = bmpImg->widthByte;
     bmpImgT->gwidthByte = bmpImg->gwidthByte;
     bmpImgT->biBitCount = bmpImg->biBitCount;
     return bmpImgT;
 }
 
-CvImage *LoadFile(char *path, int print) //¶ÁÈ¡bmpÎÄ¼ş
+CvImage *LoadFile(char *path, int print) //è¯»å–bmpæ–‡ä»¶
 {
-    FILE *pfile;                                          //ÉêÇëÒ»¸öÎÄ¼şÖ¸Õë
-    CvImage *bmpImg = (CvImage *)malloc(sizeof(CvImage)); //´´½¨Ò»¸öCvImage½á¹¹Ìå¿Õ¼ä£¬¼°Ö¸ÏòËüµÄÖ¸Õë
-    BITMAPFILEHEADER bitHead;                             //ÉêÇëÎÄ¼şÍ·
-    BITMAPINFOHEADER bitinfoHead;                         //ÉêÇëĞÅÏ¢Í·
-    RGBQUAD *rgb;                                         //´´½¨µ÷É«°åÖ¸Õë
+    FILE *pfile;                                          //ç”³è¯·ä¸€ä¸ªæ–‡ä»¶æŒ‡é’ˆ
+    CvImage *bmpImg = (CvImage *)malloc(sizeof(CvImage)); //åˆ›å»ºä¸€ä¸ªCvImageç»“æ„ä½“ç©ºé—´ï¼ŒåŠæŒ‡å‘å®ƒçš„æŒ‡é’ˆ
+    BITMAPFILEHEADER bitHead;                             //ç”³è¯·æ–‡ä»¶å¤´
+    BITMAPINFOHEADER bitinfoHead;                         //ç”³è¯·ä¿¡æ¯å¤´
+    RGBQUAD *rgb;                                         //åˆ›å»ºè°ƒè‰²æ¿æŒ‡é’ˆ
     int width, height, biBitCount;
-    int widthByte, gwidthByte; //±ØĞëÎª4µÄÕûÊı±¶ widthByte Ô­Ê¼ gwidthByte 8Î»
+    int widthByte, gwidthByte; //å¿…é¡»ä¸º4çš„æ•´æ•°å€ widthByte åŸå§‹ gwidthByte 8ä½
     int i, j, k;
     int channels, step, offset;
     BYTE pixVal;
@@ -225,41 +225,41 @@ CvImage *LoadFile(char *path, int print) //¶ÁÈ¡bmpÎÄ¼ş
         return NULL;
     }
 
-    fread(&bitHead, sizeof(BITMAPFILEHEADER), 1, pfile);     //¶ÁÈëÎÄ¼şÍ·
-    fread(&bitinfoHead, sizeof(BITMAPINFOHEADER), 1, pfile); //¶ÁÈëĞÅÏ¢Í·
+    fread(&bitHead, sizeof(BITMAPFILEHEADER), 1, pfile);     //è¯»å…¥æ–‡ä»¶å¤´
+    fread(&bitinfoHead, sizeof(BITMAPINFOHEADER), 1, pfile); //è¯»å…¥ä¿¡æ¯å¤´
 
     width = bitinfoHead.biWidth;
     height = bitinfoHead.biHeight;
     biBitCount = bitinfoHead.biBitCount;
-    widthByte = (width * biBitCount / 8 + 3) / 4 * 4; //4µÄÕûÊı±¶
+    widthByte = (width * biBitCount / 8 + 3) / 4 * 4; //4çš„æ•´æ•°å€
     gwidthByte = (width * 8 / 8 + 3) / 4 * 4;
 
     if (print)
     {
-        printf("\n\tÎ»Í¼ÎÄ¼şÍ·\n");
-        printf("ÎÄ¼şÀàĞÍ£º%d\n", bitHead.bfType);
-        printf("ÎÄ¼ş´óĞ¡: %d\n", bitHead.bfSize);
-        printf("±£Áô×Ö: %d\n", bitHead.bfReserved1);
-        printf("±£Áô×Ö: %d\n", bitHead.bfReserved2);
-        printf("Êµ¼ÊÎ»Í¼Êı¾İµÄÆ«ÒÆ×Ö½ÚÊı: %d\n\n", bitHead.bfOffBits);
+        printf("\n\tä½å›¾æ–‡ä»¶å¤´\n");
+        printf("æ–‡ä»¶ç±»å‹ï¼š%d\n", bitHead.bfType);
+        printf("æ–‡ä»¶å¤§å°: %d\n", bitHead.bfSize);
+        printf("ä¿ç•™å­—: %d\n", bitHead.bfReserved1);
+        printf("ä¿ç•™å­—: %d\n", bitHead.bfReserved2);
+        printf("å®é™…ä½å›¾æ•°æ®çš„åç§»å­—èŠ‚æ•°: %d\n\n", bitHead.bfOffBits);
 
-        printf("\tÎ»Í¼ĞÅÏ¢Í·\n");
-        printf("½á¹¹ÌåµÄ³¤¶È: %d\n", bitinfoHead.biSize);
-        printf("Î»Í¼¿í: %d\n", bitinfoHead.biWidth);
-        printf("Î»Í¼¸ß: %d\n", bitinfoHead.biHeight);
-        printf("biPlanesÆ½ÃæÊı: %d\n", bitinfoHead.biPlanes);
-        printf("biBitCount²ÉÓÃÑÕÉ«Î»Êı: %d\n", bitinfoHead.biBitCount);
-        printf("Ñ¹Ëõ·½Ê½: %d\n", bitinfoHead.biCompression);
-        printf("biSizeImageÊµ¼ÊÎ»Í¼Êı¾İÕ¼ÓÃµÄ×Ö½ÚÊı: %d\n", bitinfoHead.biSizeImage);
-        printf("X·½Ïò·Ö±æÂÊ: %d\n", bitinfoHead.biXPelsPerMeter);
-        printf("Y·½Ïò·Ö±æÂÊ: %d\n", bitinfoHead.biYPelsPerMeter);
-        printf("Ê¹ÓÃµÄÑÕÉ«Êı: %d\n", bitinfoHead.biClrUsed);
-        printf("ÖØÒªÑÕÉ«Êı: %d\n\n", bitinfoHead.biClrImportant);
+        printf("\tä½å›¾ä¿¡æ¯å¤´\n");
+        printf("ç»“æ„ä½“çš„é•¿åº¦: %d\n", bitinfoHead.biSize);
+        printf("ä½å›¾å®½: %d\n", bitinfoHead.biWidth);
+        printf("ä½å›¾é«˜: %d\n", bitinfoHead.biHeight);
+        printf("biPlaneså¹³é¢æ•°: %d\n", bitinfoHead.biPlanes);
+        printf("biBitCounté‡‡ç”¨é¢œè‰²ä½æ•°: %d\n", bitinfoHead.biBitCount);
+        printf("å‹ç¼©æ–¹å¼: %d\n", bitinfoHead.biCompression);
+        printf("biSizeImageå®é™…ä½å›¾æ•°æ®å ç”¨çš„å­—èŠ‚æ•°: %d\n", bitinfoHead.biSizeImage);
+        printf("Xæ–¹å‘åˆ†è¾¨ç‡: %d\n", bitinfoHead.biXPelsPerMeter);
+        printf("Yæ–¹å‘åˆ†è¾¨ç‡: %d\n", bitinfoHead.biYPelsPerMeter);
+        printf("ä½¿ç”¨çš„é¢œè‰²æ•°: %d\n", bitinfoHead.biClrUsed);
+        printf("é‡è¦é¢œè‰²æ•°: %d\n\n", bitinfoHead.biClrImportant);
     }
 
     if (biBitCount == 8)
     {
-        rgb = (RGBQUAD *)malloc(sizeof(RGBQUAD) * 256); //8Î»ÓĞµ÷É«°å£¬ĞèÏÈ¶ÁÈë
+        rgb = (RGBQUAD *)malloc(sizeof(RGBQUAD) * 256); //8ä½æœ‰è°ƒè‰²æ¿ï¼Œéœ€å…ˆè¯»å…¥
         fread(rgb, sizeof(RGBQUAD), 256, pfile);
         free(rgb);
 
@@ -290,13 +290,13 @@ CvImage *LoadFile(char *path, int print) //¶ÁÈ¡bmpÎÄ¼ş
         channels = 3;
         bmpImg->imageData = (BYTE *)malloc(sizeof(BYTE) * width * 3 * height);
         step = channels * width;
-        //windows¹æ¶¨Ã¿Ò»¸öÉ¨ÃèĞĞÎª4µÄ±¶Êı£¬²»×ã²¹0
+        //windowsè§„å®šæ¯ä¸€ä¸ªæ‰«æè¡Œä¸º4çš„å€æ•°ï¼Œä¸è¶³è¡¥0
         offset = step % 4;
         if (offset != 0)
         {
             offset = 4 - offset;
         }
-        //¶ÁÈ¡²ÊÉ«Í¼ÏñÊı¾İ
+        //è¯»å–å½©è‰²å›¾åƒæ•°æ®
         for (i = 0; i < height; i++)
         {
             for (j = 0; j < width; j++)
@@ -318,7 +318,7 @@ CvImage *LoadFile(char *path, int print) //¶ÁÈ¡bmpÎÄ¼ş
     }
     fclose(pfile);
 
-    //Ğ´ÈëbmpImg½á¹¹Ìå£¬²¢·µ»Ø¸ømainÖĞÖ¸Õë
+    //å†™å…¥bmpImgç»“æ„ä½“ï¼Œå¹¶è¿”å›ç»™mainä¸­æŒ‡é’ˆ
     bmpImg->width = width;
     bmpImg->height = height;
     bmpImg->widthByte = widthByte;
@@ -348,7 +348,7 @@ int OutFile(char *path, CvImage *bmpImg)
     }
 
     if ((pfile = fopen(path, "wb")) == NULL)
-        return 0; //0¼Ù£¬1Õæ
+        return 0; //0å‡ï¼Œ1çœŸ
 
     bitHead.bfType = 0x4D42;
     bitHead.bfSize = 54 + 256 * 4 + width;
@@ -371,7 +371,7 @@ int OutFile(char *path, CvImage *bmpImg)
     fwrite(&bitinfoHead, sizeof(BITMAPINFOHEADER), 1, pfile);
 
     rgb = (RGBQUAD *)malloc(sizeof(RGBQUAD) * 256);
-    for (i = 0; i < 256; i++) //µ÷É«°å³õÊ¼»¯
+    for (i = 0; i < 256; i++) //è°ƒè‰²æ¿åˆå§‹åŒ–
     {
         rgb[i].rgbBlue = i;
         rgb[i].rgbGreen = i;
