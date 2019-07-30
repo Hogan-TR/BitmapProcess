@@ -10,6 +10,7 @@ int main()
     Img = LoadFile(Inpath);
     if (!Img->state) //Meet error
         return 0;
+    // GrayscaleProc(Img);
     Img = OutFile(Outpath, Img);
     if (!Img->state)
         return 0;

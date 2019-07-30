@@ -54,7 +54,7 @@ typedef struct //主
 
 CvImage *LoadFile(char *);
 CvImage *OutFile(char *, CvImage *);
-// void GrayscaleProc(CvImage *);
+void GrayscaleProc(CvImage *);
 // CvImage *RoateFile(CvImage *, int);
 
 #endif
